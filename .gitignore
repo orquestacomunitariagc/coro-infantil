@@ -1,0 +1,18 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Entornos y credenciales locales
+.env
+.env.*
+!.env.example
+
+# Dependencias y resultados de los tests
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+
+# Editores
+.vscode/
+.idea/

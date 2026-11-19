@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripción Pruebas de Acceso – Coro Infantil OCGC</title>
+    <meta name="description"
+        content="Formulario de inscripción para las audiciones del Coro Infantil de la OCGC (El Señor de los Anillos).">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=1">
+    <link rel="icon" type="image/png" href="assets/logo_OCGC_simple.png">
+</head>
+
+<body>
+    <div class="container">
+        <header class="form-header">
+            <div class="header-logo">
+                <img src="assets/logo_OCGC.png" alt="Logo OCGC">
+            </div>
+            <h2>Inscripción Pruebas de Acceso – Coro Infantil OCGC (El Señor de los Anillos)</h2>
+            <p class="description">
+                Formulario de inscripción para las audiciones del próximo 10 de diciembre (de 17:00 a 19:00h en el
+                IES La Isleta, C/ Juan Rejón 85). Dirigido a niños, niñas y jóvenes de entre 6 y 16 años.
+            </p>
+        </header>
+
+        <form id="registrationForm" autocomplete="on">
+            <!-- Bloque 1 -->
+            <section class="form-section">
+                <h4>1. Datos del padre, madre o tutor/a legal</h4>
+
+                <div class="form-group">
+                    <label for="guardianName">1. Nombre y apellidos del adulto responsable
+                        <span class="required-asterisk">*</span></label>
+                    <input type="text" id="guardianName" name="guardianName" required
+                        autocomplete="name" placeholder="Nombre y apellidos">
+                </div>
+
+                <div class="form-group">
+                    <label>2. Parentesco con el/la menor <span class="required-asterisk">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="guardianRelationship" value="Padre" required>
+                            <span>Padre</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="guardianRelationship" value="Madre">
+                            <span>Madre</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="guardianRelationship" value="Tutor/a legal">
+                            <span>Tutor/a legal</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="guardianRelationship" value="Abuelo/a u otro familiar autorizado">
+                            <span>Abuelo/a u otro familiar autorizado</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianPhone">3. Teléfono de contacto (preferiblemente con WhatsApp)
+                        <span class="required-asterisk">*</span></label>
+                    <input type="tel" id="guardianPhone" name="guardianPhone" required inputmode="tel"
+                        autocomplete="tel" placeholder="Ej. 600 000 000">
+                    <small class="clarification">Indica un número con WhatsApp si es posible.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianEmail">4. Correo electrónico <span class="required-asterisk">*</span></label>
+                    <input type="email" id="guardianEmail" name="guardianEmail" required autocomplete="email"
+                        placeholder="nombre@correo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="emergencyPhone">5. Teléfono alternativo de emergencia</label>
+                    <input type="tel" id="emergencyPhone" name="emergencyPhone" inputmode="tel"
+                        placeholder="Otro número de contacto">
+                </div>
+            </section>
+
+            <!-- Bloque 2 -->
+            <section class="form-section">
+                <h4>2. Datos del/de la aspirante</h4>
+
+                <div class="form-group">
+                    <label for="childName">6. Nombre y apellidos del niño/a o joven
+                        <span class="required-asterisk">*</span></label>
+                    <input type="text" id="childName" name="childName" required placeholder="Nombre y apellidos">
+                </div>
+
+                <div class="form-group">
+                    <label for="birthDate">7. Fecha de nacimiento <span class="required-asterisk">*</span></label>
+                    <input type="date" id="birthDate" name="birthDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="childAge">8. Edad actual <span class="required-asterisk">*</span></label>
+                    <select id="childAge" name="childAge" required>
+                        <option value="">Selecciona la edad</option>
+                        <option value="6">6 años</option>
+                        <option value="7">7 años</option>
+                        <option value="8">8 años</option>
+                        <option value="9">9 años</option>
+                        <option value="10">10 años</option>
+                        <option value="11">11 años</option>
+                        <option value="12">12 años</option>
+                        <option value="13">13 años</option>
+                        <option value="14">14 años</option>
+                        <option value="15">15 años</option>
+                        <option value="16">16 años</option>
+                    </select>
+                    <small class="clarification" id="ageNote">
+                        Se calcula automáticamente al indicar la fecha de nacimiento (edad a 10/12/2026). Puedes
+                        corregirla si es necesario.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>9. ¿Tiene experiencia previa cantando en algún coro?
+                        <span class="required-asterisk">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="choirExperience" value="si" required>
+                            <span>Sí</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="choirExperience" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="musicalBackground">10. ¿Cursa estudios musicales, toca algún instrumento o sabe leer
+                        partituras (solfeo)? <span class="required-asterisk">*</span></label>
+                    <textarea id="musicalBackground" name="musicalBackground" required rows="3"
+                        placeholder="Si la respuesta es sí, indica cuáles y cuántos años lleva"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="medicalNotes">11. ¿Tiene alguna alergia, intolerancia o condición médica que debamos
+                        tener en cuenta durante las pruebas o ensayos?</label>
+                    <textarea id="medicalNotes" name="medicalNotes" rows="2"
+                        placeholder="Indica lo que consideres necesario (opcional)"></textarea>
+                </div>
+            </section>
+
+            <!-- Bloque 3 -->
+            <section class="form-section">
+                <h4>3. Disponibilidad y logística de la prueba</h4>
+
+                <div class="form-group">
+                    <label>12. El día 10 de diciembre las pruebas son de 17:00 a 19:00h. ¿Tenéis preferencia de franja
+                        horaria para asistir? <span class="required-asterisk">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="auditionSlot" value="De 17:00 a 18:00h" required>
+                            <span>De 17:00 a 18:00h</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="auditionSlot" value="De 18:00 a 19:00h">
+                            <span>De 18:00 a 19:00h</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="auditionSlot" value="Sin preferencia">
+                            <span>Sin preferencia</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>13. Los ensayos regulares serán los jueves de 17:00 a 18:30h a partir de febrero.
+                        ¿Confirmáis disponibilidad para asistir con regularidad?
+                        <span class="required-asterisk">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="rehearsalAvailability" value="Sí, total disponibilidad" required>
+                            <span>Sí, total disponibilidad</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="rehearsalAvailability" value="Depende de otras actividades">
+                            <span>Depende de otras actividades</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bloque 4 -->
+            <section class="form-section">
+                <h4>4. Autorizaciones y protección de datos</h4>
+
+                <div class="form-group">
+                    <label>14. Autorización de participación <span class="required-asterisk">*</span></label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="authorization" name="authorization" required>
+                        <span>Confirmo que soy el padre, madre o tutor/a legal del menor (o cuento con su autorización
+                            expresa) y autorizo su participación en las pruebas de acceso del Coro Infantil de la
+                            OCGC.</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>15. Protección de datos <span class="required-asterisk">*</span></label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="dataProtection" name="dataProtection" required>
+                        <span>Acepto que los datos facilitados sean tratados únicamente para la gestión de las
+                            audiciones y la comunicación relacionada con este proyecto musical.</span>
+                    </label>
+                </div>
+            </section>
+
+            <div class="form-footer">
+                <div id="formError" class="form-error hidden" role="alert"></div>
+                <button type="submit" id="submitBtn">Enviar inscripción</button>
+            </div>
+        </form>
+    </div>
+
+    <script type="module" src="script.js?v=1"></script>
+</body>
+
+</html>
