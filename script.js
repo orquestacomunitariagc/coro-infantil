@@ -1,7 +1,16 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { supabaseConfig } from "./assets/supabase-config.js";
 
-const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+// El formulario público debe enviar siempre como rol "anon", aunque en este
+// navegador se haya iniciado sesión en el panel de administración (mismo
+// origen, misma sesión guardada en localStorage).
+const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
+    auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false
+    }
+});
 
 // ---------------------------------------------------------------------------
 // Configuración
@@ -307,10 +316,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const { error } = await supabase.from(TABLE).insert(payload);
 
             if (error) {
-                console.error("Error al guardar la inscripción:", error);
+                console.error("Error al guardar la inscripción:", {
+                    status: error.status,
+                    code: error.code,
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint
+                });
                 showError(
                     "No hemos podido registrar la inscripción. Inténtalo de nuevo en unos minutos. " +
-                    "Si el problema continúa, escríbenos indicando el error."
+                    "Si el problema continúa, escríbenos indicando el error" +
+                    (error.code ? ` (código ${error.code})` : "") + "."
                 );
                 setSubmitting(false);
                 return;

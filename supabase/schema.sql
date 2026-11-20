@@ -64,6 +64,16 @@ create policy "anon inserta inscripciones"
   to anon
   with check (true);
 
+-- Red de seguridad: si alguien envía el formulario con una sesión de
+-- administración abierta en el mismo navegador, la inserción también se
+-- permite. El formulario público, además, se crea sin persistir sesión.
+drop policy if exists "usuarios autenticados insertan inscripciones" on public.inscripciones_coro_infantil;
+create policy "usuarios autenticados insertan inscripciones"
+  on public.inscripciones_coro_infantil
+  for insert
+  to authenticated
+  with check (true);
+
 -- El panel, una vez autenticado, puede leer.
 drop policy if exists "usuarios autenticados leen inscripciones" on public.inscripciones_coro_infantil;
 create policy "usuarios autenticados leen inscripciones"

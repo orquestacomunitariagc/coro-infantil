@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import pg from "pg";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { loadLocalEnv } from "./helpers/env.mjs";
 
 // ---------------------------------------------------------------------------
@@ -18,6 +20,12 @@ const DB_URL = (process.env.SUPABASE_DB_URL || "").trim();
 const PLACEHOLDER_PATTERN =
     /TU_REF|TU_PASSWORD|TU_REGION|TU-PROYECTO|\bREF\b|\bPASSWORD\b|\bREGION\b/i;
 const DB_URL_IS_PLACEHOLDER = PLACEHOLDER_PATTERN.test(DB_URL);
+
+// Si la configuración de Supabase aún tiene placeholders, el cliente no se
+// puede crear y el formulario no envía: los tests que dependen de eso se omiten.
+const SUPABASE_CONFIG_IS_PLACEHOLDER = /PLACEHOLDER/.test(
+    readFileSync(resolve(import.meta.dirname, "../assets/supabase-config.js"), "utf8")
+);
 
 const RUN_ID = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 const TEST_PREFIX = "E2E TEST";
@@ -332,4 +340,64 @@ test("6. el selector familiar muestra y valida los datos del segundo progenitor"
         phoneRequired: false,
         allRelationshipsRequired: false
     });
+});
+
+test("7. el formulario público no reutiliza la sesión del panel", async ({ page }) => {
+    test.skip(
+        SUPABASE_CONFIG_IS_PLACEHOLDER,
+        "La configuración local de Supabase contiene placeholders."
+    );
+
+    // Simula una sesión de administración guardada en este mismo navegador.
+    await page.addInitScript(() => {
+        window.localStorage.setItem(
+            "sb-rgnaqwcgufooizjvrhaw-auth-token",
+            JSON.stringify({
+                access_token: "fake-admin-token",
+                refresh_token: "fake-refresh-token",
+                token_type: "bearer",
+                expires_in: 3600,
+                expires_at: Math.floor(Date.now() / 1000) + 3600,
+                user: {
+                    id: "00000000-0000-0000-0000-000000000000",
+                    aud: "authenticated",
+                    role: "authenticated",
+                    email: "admin@example.com"
+                }
+            })
+        );
+    });
+
+    // Se intercepta el envío: solo interesa la cabecera de autorización.
+    let headers = null;
+    await page.route("**/rest/v1/inscripciones_coro_infantil*", async (route) => {
+        headers = route.request().headers();
+        await route.abort();
+    });
+
+    await page.goto("/index.html");
+
+    await page.locator('input[name="familyType"][value="monoparental"]').check();
+    await page.locator("#guardianName").fill(`${TEST_PREFIX} Sesion ${RUN_ID}`);
+    await page.locator('input[name="guardianRelationship"][value="Madre"]').check();
+    await page.locator("#guardianPhone").fill("600 123 456");
+    await page.locator("#guardianEmail").fill("e2e@example.com");
+    await page.locator("#childName").fill(`${TEST_PREFIX} Menor sesion ${RUN_ID}`);
+    await page.locator("#birthDate").fill("2015-05-20");
+    await page.locator("#birthDate").dispatchEvent("change");
+    await page.locator('input[name="choirExperience"][value="no"]').check();
+    await page.locator("#musicalBackground").fill("Ninguno");
+    await page.locator('input[name="auditionSlot"][value="Sin preferencia"]').check();
+    await page
+        .locator('input[name="rehearsalAvailability"][value="Sí, total disponibilidad"]')
+        .check();
+    await page.locator("#authorization").check();
+    await page.locator("#dataProtection").check();
+
+    await page.locator("#submitBtn").click();
+    await expect.poll(() => headers, { timeout: 10_000 }).not.toBeNull();
+
+    // La petición usa la clave anónima, no el token guardado del panel.
+    expect(headers.authorization).toBe(`Bearer ${headers.apikey}`);
+    expect(headers.authorization).not.toContain("fake-admin-token");
 });
