@@ -228,6 +228,29 @@ textarea {
     background-color: rgba(201, 167, 101, 0.05);
 }
 
+/* Opciones largas que deben ocupar el ancho completo */
+.radio-group.is-stacked {
+    flex-direction: column;
+}
+
+.radio-group.is-stacked .radio-option {
+    flex: none;
+}
+
+/* Progenitores o tutores legales */
+.guardian-block + .guardian-block {
+    margin-top: 30px;
+    padding-top: 24px;
+    border-top: 1px dashed #e0e0e0;
+}
+
+.guardian-block-title {
+    margin: 0 0 18px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
 /* Checkbox Styling */
 .checkbox-option {
     display: flex;
@@ -527,6 +550,18 @@ td.cell-clip {
 
 td.cell-empty {
     color: #aaa;
+}
+
+.guardian-extra {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background-color: rgba(201, 167, 101, 0.18);
+    color: #8a6d2f;
+    font-size: 0.7rem;
+    font-weight: 700;
+    vertical-align: middle;
 }
 
 .badge {

@@ -77,6 +77,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = document.getElementById("submitBtn");
     const formError = document.getElementById("formError");
 
+    const familyTypeRadios = form.querySelectorAll('input[name="familyType"]');
+    const guardian2Block = document.getElementById("guardian2Block");
+    const guardian2Name = document.getElementById("guardian2Name");
+    const guardian2Phone = document.getElementById("guardian2Phone");
+    const guardian2Email = document.getElementById("guardian2Email");
+    const guardian2RelationshipRadios =
+        form.querySelectorAll('input[name="guardian2Relationship"]');
+    const guardian2Inputs = [guardian2Name, guardian2Phone, guardian2Email];
+
     // No se permiten fechas de nacimiento futuras.
     birthDateInput.max = todayISO();
 
@@ -158,8 +167,48 @@ document.addEventListener("DOMContentLoaded", () => {
     ageSelect.addEventListener("change", handleAgeChange);
 
     // -----------------------------------------------------------------------
+    // Composición familiar y segundo progenitor/tutor
+    // -----------------------------------------------------------------------
+
+    function isTwoGuardiansSelected() {
+        return radioValue("familyType") === "dos_progenitores";
+    }
+
+    function setGuardian2Visible(visible) {
+        guardian2Block.classList.toggle("hidden", !visible);
+
+        [...guardian2Inputs, ...guardian2RelationshipRadios].forEach((input) => {
+            input.disabled = !visible;
+            input.required = visible;
+        });
+
+        if (!visible) {
+            guardian2Inputs.forEach((input) => {
+                input.value = "";
+                input.setCustomValidity("");
+            });
+            guardian2RelationshipRadios.forEach((input) => {
+                input.checked = false;
+            });
+        }
+    }
+
+    familyTypeRadios.forEach((radio) => {
+        radio.addEventListener("change", () => setGuardian2Visible(isTwoGuardiansSelected()));
+    });
+
+    // Arranca con un solo progenitor/tutor: el segundo bloque permanece oculto
+    // y sus campos no se validan ni se envían.
+    setGuardian2Visible(false);
+
+    // -----------------------------------------------------------------------
     // Teléfonos
     // -----------------------------------------------------------------------
+
+    function isPhoneRequired(input) {
+        if (input === guardian2Phone) return isTwoGuardiansSelected();
+        return input === guardianPhone;
+    }
 
     function validatePhone(input, required) {
         input.setCustomValidity("");
@@ -177,9 +226,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    [guardianPhone, emergencyPhone].forEach((input) => {
+    [guardianPhone, emergencyPhone, guardian2Phone].forEach((input) => {
         input.addEventListener("input", () => input.setCustomValidity(""));
-        input.addEventListener("blur", () => validatePhone(input, input === guardianPhone));
+        input.addEventListener("blur", () => validatePhone(input, isPhoneRequired(input)));
     });
 
     // -----------------------------------------------------------------------
@@ -217,17 +266,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
         validatePhone(guardianPhone, true);
         validatePhone(emergencyPhone, false);
+        validatePhone(guardian2Phone, isTwoGuardiansSelected());
 
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
         }
 
+        const twoGuardians = isTwoGuardiansSelected();
+
+        // El tipo de familia solo controla qué campos se muestran: no se guarda.
         const payload = {
             guardian_name: document.getElementById("guardianName").value.trim(),
             guardian_relationship: radioValue("guardianRelationship"),
             guardian_phone: guardianPhone.value.trim(),
             guardian_email: document.getElementById("guardianEmail").value.trim(),
+            guardian2_name: twoGuardians ? guardian2Name.value.trim() : null,
+            guardian2_relationship: twoGuardians ? radioValue("guardian2Relationship") : null,
+            guardian2_phone: twoGuardians ? guardian2Phone.value.trim() : null,
+            guardian2_email: twoGuardians ? guardian2Email.value.trim() : null,
             emergency_phone: emergencyPhone.value.trim() || null,
 
             child_name: document.getElementById("childName").value.trim(),

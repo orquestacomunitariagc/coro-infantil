@@ -13,10 +13,12 @@ Formulario de inscripción para las pruebas de acceso del Coro Infantil de la Or
 
 ## Datos solicitados
 
-- **Adulto responsable:** nombre, parentesco, teléfono de contacto, correo electrónico y teléfono de emergencia.
+- **Composición familiar:** familia monoparental o con dos progenitores o tutores/as legales.
+- **Progenitores o tutores/as legales:** nombre, parentesco, teléfono de contacto y correo electrónico. Si son dos, se solicitan los datos de ambos.
 - **Aspirante:** nombre, fecha de nacimiento, edad, experiencia previa en coro, estudios musicales y alergias o condiciones médicas.
 - **Disponibilidad:** franja horaria para la prueba y compromiso con los ensayos.
 - **Autorizaciones:** participación y protección de datos.
+- **Teléfono de emergencia:** opcional.
 
 ## Ensayos
 

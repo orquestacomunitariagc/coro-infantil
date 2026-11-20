@@ -10,7 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1">
+    <link rel="stylesheet" href="style.css?v=2">
     <link rel="icon" type="image/png" href="assets/logo_OCGC_simple.png">
 </head>
 
@@ -30,49 +30,127 @@
         <form id="registrationForm" autocomplete="on">
             <!-- Bloque 1 -->
             <section class="form-section">
-                <h4>1. Datos del padre, madre o tutor/a legal</h4>
+                <h4>1. Composición familiar</h4>
 
                 <div class="form-group">
-                    <label for="guardianName">Nombre y apellidos del adulto responsable
+                    <label>¿Cómo está compuesta la familia del/de la menor?
                         <span class="required-asterisk">*</span></label>
-                    <input type="text" id="guardianName" name="guardianName" required
-                        autocomplete="name" placeholder="Nombre y apellidos">
+                    <div class="radio-group is-stacked">
+                        <label class="radio-option">
+                            <input type="radio" name="familyType" value="monoparental" required>
+                            <span>Familia monoparental: un solo progenitor o tutor/a legal</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="familyType" value="dos_progenitores">
+                            <span>El/la menor cuenta con dos progenitores o tutores/as legales</span>
+                        </label>
+                    </div>
+                    <small class="clarification">
+                        Si el/la menor cuenta con dos progenitores o tutores/as legales, se solicitarán los datos de
+                        contacto de ambos.
+                    </small>
                 </div>
+            </section>
 
-                <div class="form-group">
-                    <label>Parentesco con el/la menor <span class="required-asterisk">*</span></label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="guardianRelationship" value="Padre" required>
-                            <span>Padre</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="guardianRelationship" value="Madre">
-                            <span>Madre</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="guardianRelationship" value="Tutor/a legal">
-                            <span>Tutor/a legal</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="guardianRelationship" value="Abuelo/a u otro familiar autorizado">
-                            <span>Abuelo/a u otro familiar autorizado</span>
-                        </label>
+            <!-- Bloque 2 -->
+            <section class="form-section">
+                <h4>2. Datos de los progenitores o tutores/as legales</h4>
+
+                <div class="guardian-block">
+                    <p class="guardian-block-title">Progenitor/a o tutor/a legal 1</p>
+
+                    <div class="form-group">
+                        <label for="guardianName">Nombre y apellidos del adulto responsable
+                            <span class="required-asterisk">*</span></label>
+                        <input type="text" id="guardianName" name="guardianName" required
+                            autocomplete="name" placeholder="Nombre y apellidos">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Parentesco con el/la menor <span class="required-asterisk">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="guardianRelationship" value="Padre" required>
+                                <span>Padre</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="guardianRelationship" value="Madre">
+                                <span>Madre</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="guardianRelationship" value="Tutor/a legal">
+                                <span>Tutor/a legal</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="guardianRelationship"
+                                    value="Abuelo/a u otro familiar autorizado">
+                                <span>Abuelo/a u otro familiar autorizado</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guardianPhone">Teléfono de contacto (preferiblemente con WhatsApp)
+                            <span class="required-asterisk">*</span></label>
+                        <input type="tel" id="guardianPhone" name="guardianPhone" required inputmode="tel"
+                            autocomplete="tel" placeholder="Ej. 600 000 000">
+                        <small class="clarification">Indique un número con WhatsApp si es posible.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guardianEmail">Correo electrónico <span class="required-asterisk">*</span></label>
+                        <input type="email" id="guardianEmail" name="guardianEmail" required autocomplete="email"
+                            placeholder="nombre@correo.com">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="guardianPhone">Teléfono de contacto (preferiblemente con WhatsApp)
-                        <span class="required-asterisk">*</span></label>
-                    <input type="tel" id="guardianPhone" name="guardianPhone" required inputmode="tel"
-                        autocomplete="tel" placeholder="Ej. 600 000 000">
-                    <small class="clarification">Indique un número con WhatsApp si es posible.</small>
-                </div>
+                <div class="guardian-block hidden" id="guardian2Block">
+                    <p class="guardian-block-title">Progenitor/a o tutor/a legal 2</p>
 
-                <div class="form-group">
-                    <label for="guardianEmail">Correo electrónico <span class="required-asterisk">*</span></label>
-                    <input type="email" id="guardianEmail" name="guardianEmail" required autocomplete="email"
-                        placeholder="nombre@correo.com">
+                    <div class="form-group">
+                        <label for="guardian2Name">Nombre y apellidos del segundo adulto responsable
+                            <span class="required-asterisk">*</span></label>
+                        <input type="text" id="guardian2Name" name="guardian2Name" autocomplete="off"
+                            placeholder="Nombre y apellidos">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Parentesco con el/la menor <span class="required-asterisk">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="guardian2Relationship" value="Padre">
+                                <span>Padre</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="guardian2Relationship" value="Madre">
+                                <span>Madre</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="guardian2Relationship" value="Tutor/a legal">
+                                <span>Tutor/a legal</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="guardian2Relationship"
+                                    value="Abuelo/a u otro familiar autorizado">
+                                <span>Abuelo/a u otro familiar autorizado</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guardian2Phone">Teléfono de contacto (preferiblemente con WhatsApp)
+                            <span class="required-asterisk">*</span></label>
+                        <input type="tel" id="guardian2Phone" name="guardian2Phone" inputmode="tel"
+                            autocomplete="off" placeholder="Ej. 600 000 000">
+                        <small class="clarification">Indique un número con WhatsApp si es posible.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guardian2Email">Correo electrónico
+                            <span class="required-asterisk">*</span></label>
+                        <input type="email" id="guardian2Email" name="guardian2Email" autocomplete="off"
+                            placeholder="nombre@correo.com">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -82,9 +160,9 @@
                 </div>
             </section>
 
-            <!-- Bloque 2 -->
+            <!-- Bloque 3 -->
             <section class="form-section">
-                <h4>2. Datos del/de la aspirante</h4>
+                <h4>3. Datos del/de la aspirante</h4>
 
                 <div class="form-group">
                     <label for="childName">Nombre y apellidos del niño/a o joven
@@ -149,9 +227,9 @@
                 </div>
             </section>
 
-            <!-- Bloque 3 -->
+            <!-- Bloque 4 -->
             <section class="form-section">
-                <h4>3. Disponibilidad y logística de la prueba</h4>
+                <h4>4. Disponibilidad y logística de la prueba</h4>
 
                 <div class="form-group">
                     <label>El día 10 de diciembre las pruebas son de 17:00 a 19:00h. ¿Tienen preferencia de franja
@@ -189,9 +267,9 @@
                 </div>
             </section>
 
-            <!-- Bloque 4 -->
+            <!-- Bloque 5 -->
             <section class="form-section">
-                <h4>4. Autorizaciones y protección de datos</h4>
+                <h4>5. Autorizaciones y protección de datos</h4>
 
                 <div class="form-group">
                     <label>Autorización de participación <span class="required-asterisk">*</span></label>
@@ -220,7 +298,7 @@
         </form>
     </div>
 
-    <script type="module" src="script.js?v=1"></script>
+    <script type="module" src="script.js?v=2"></script>
 </body>
 
 </html>

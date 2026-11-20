@@ -222,6 +222,9 @@ function matchesFilters(row) {
             row.child_name,
             row.guardian_email,
             row.guardian_phone,
+            row.guardian2_name,
+            row.guardian2_email,
+            row.guardian2_phone,
             row.emergency_phone
         ]
             .filter(Boolean)
@@ -247,6 +250,15 @@ function shortCell(value, fallback = "-") {
     return `<td class="cell-clip${value ? "" : " cell-empty"}" title="${escapeHtml(text)}">${escapeHtml(text)}</td>`;
 }
 
+// Nombre del adulto responsable, con una marca si hay un segundo progenitor.
+function guardianCell(row) {
+    const name = row.guardian_name || "-";
+    const extra = row.guardian2_name
+        ? '<span class="guardian-extra" title="Incluye los datos del segundo progenitor o tutor legal">2</span>'
+        : "";
+    return `<td class="cell-clip${row.guardian_name ? "" : " cell-empty"}" title="${escapeHtml(name)}">${escapeHtml(name)}${extra}</td>`;
+}
+
 function renderTable() {
     if (!displayedData.length) {
         responsesBody.innerHTML =
@@ -266,7 +278,7 @@ function renderTable() {
             (row) => `
             <tr data-id="${escapeHtml(row.id)}">
                 <td>${escapeHtml(formatDateTime(row.created_at))}</td>
-                ${shortCell(row.guardian_name)}
+                ${guardianCell(row)}
                 ${shortCell(row.guardian_relationship)}
                 ${shortCell(row.guardian_phone)}
                 ${shortCell(row.guardian_email)}
@@ -318,6 +330,16 @@ function openDetail(id) {
         ["Parentesco", row.guardian_relationship],
         ["Teléfono de contacto", row.guardian_phone],
         ["Correo electrónico", row.guardian_email],
+
+        ...(row.guardian2_name
+            ? [
+                ["Segundo adulto responsable", row.guardian2_name],
+                ["Parentesco (segundo adulto)", row.guardian2_relationship],
+                ["Teléfono de contacto (segundo adulto)", row.guardian2_phone],
+                ["Correo electrónico (segundo adulto)", row.guardian2_email]
+            ]
+            : []),
+
         ["Teléfono de emergencia", row.emergency_phone || "No indicado"],
         ["Aspirante", row.child_name],
         ["Fecha de nacimiento", formatBirthDate(row.birth_date)],
@@ -374,10 +396,14 @@ document.addEventListener("keydown", (event) => {
 
 const EXPORT_HEADERS = [
     "Fecha de inscripción",
-    "Adulto responsable",
-    "Parentesco",
-    "Teléfono",
-    "Email",
+    "Adulto responsable 1",
+    "Parentesco 1",
+    "Teléfono 1",
+    "Email 1",
+    "Adulto responsable 2",
+    "Parentesco 2",
+    "Teléfono 2",
+    "Email 2",
     "Teléfono de emergencia",
     "Aspirante",
     "Fecha de nacimiento",
@@ -398,6 +424,10 @@ function rowToArray(row) {
         row.guardian_relationship || "",
         row.guardian_phone || "",
         row.guardian_email || "",
+        row.guardian2_name || "",
+        row.guardian2_relationship || "",
+        row.guardian2_phone || "",
+        row.guardian2_email || "",
         row.emergency_phone || "",
         row.child_name || "",
         formatBirthDate(row.birth_date),

@@ -22,6 +22,7 @@ const DB_URL_IS_PLACEHOLDER = PLACEHOLDER_PATTERN.test(DB_URL);
 const RUN_ID = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 const TEST_PREFIX = "E2E TEST";
 const GUARDIAN_NAME = `${TEST_PREFIX} Adulto ${RUN_ID}`;
+const GUARDIAN2_NAME = `${TEST_PREFIX} Adulto 2 ${RUN_ID}`;
 const CHILD_NAME = `${TEST_PREFIX} Menor ${RUN_ID}`;
 
 let db = null;
@@ -89,10 +90,18 @@ test("1. la inscripción se envía y se guarda correctamente en Supabase", async
 
     await page.goto("/index.html");
 
+    await page.locator('input[name="familyType"][value="dos_progenitores"]').check();
     await page.locator("#guardianName").fill(GUARDIAN_NAME);
     await page.locator('input[name="guardianRelationship"][value="Madre"]').check();
     await page.locator("#guardianPhone").fill("600 123 456");
     await page.locator("#guardianEmail").fill("e2e@example.com");
+
+    // Segundo progenitor o tutor legal.
+    await page.locator("#guardian2Name").fill(GUARDIAN2_NAME);
+    await page.locator('input[name="guardian2Relationship"][value="Padre"]').check();
+    await page.locator("#guardian2Phone").fill("600 654 321");
+    await page.locator("#guardian2Email").fill("e2e2@example.com");
+
     // El teléfono de emergencia se deja vacío a propósito (debe guardarse NULL).
     await page.locator("#childName").fill(CHILD_NAME);
     await page.locator("#birthDate").fill("2015-05-20");
@@ -133,6 +142,12 @@ test("1. la inscripción se envía y se guarda correctamente en Supabase", async
     expect(row.guardian_relationship).toBe("Madre");
     expect(row.guardian_phone).toBe("600 123 456");
     expect(row.guardian_email).toBe("e2e@example.com");
+    expect(row.guardian2_name).toBe(GUARDIAN2_NAME);
+    expect(row.guardian2_relationship).toBe("Padre");
+    expect(row.guardian2_phone).toBe("600 654 321");
+    expect(row.guardian2_email).toBe("e2e2@example.com");
+    // El tipo de familia solo controla el formulario: no se almacena.
+    expect(row).not.toHaveProperty("family_type");
     expect(row.emergency_phone).toBeNull();
     expect(row.birth_date_text).toBe("2015-05-20");
     expect(row.child_age).toBe(11);
@@ -175,6 +190,7 @@ test("2. el formulario vacío no se puede enviar", async ({ page }) => {
         return {
             formValid: form.checkValidity(),
             guardianMissing: document.getElementById("guardianName").validity.valueMissing,
+            familyMissing: document.querySelector('input[name="familyType"]').validity.valueMissing,
             childMissing: document.getElementById("childName").validity.valueMissing,
             ageMissing: document.getElementById("childAge").validity.valueMissing,
             relationshipMissing: document.querySelector(
@@ -186,6 +202,7 @@ test("2. el formulario vacío no se puede enviar", async ({ page }) => {
 
     expect(validity.formValid).toBe(false);
     expect(validity.guardianMissing).toBe(true);
+    expect(validity.familyMissing).toBe(true);
     expect(validity.childMissing).toBe(true);
     expect(validity.ageMissing).toBe(true);
     expect(validity.relationshipMissing).toBe(true);
@@ -262,4 +279,57 @@ test("5. la página de agradecimiento muestra la información de la audición", 
     await expect(page.locator(".thank-you-title")).toContainText("Inscripción recibida");
     await expect(page.locator(".thank-you-box")).toContainText("10 de diciembre");
     await expect(page.locator(".thank-you-box")).toContainText("IES La Isleta");
+});
+
+test("6. el selector familiar muestra y valida los datos del segundo progenitor", async ({ page }) => {
+    await page.goto("/index.html");
+
+    const secondBlock = page.locator("#guardian2Block");
+    const name2 = page.locator("#guardian2Name");
+    const phone2 = page.locator("#guardian2Phone");
+
+    const fieldState = () =>
+        page.evaluate(() => ({
+            nameDisabled: document.getElementById("guardian2Name").disabled,
+            nameRequired: document.getElementById("guardian2Name").required,
+            phoneRequired: document.getElementById("guardian2Phone").required,
+            allRelationshipsRequired: [...document.querySelectorAll('input[name="guardian2Relationship"]')]
+                .every((radio) => radio.required)
+        }));
+
+    // Por defecto solo hay un progenitor: el segundo bloque no se ve ni se valida.
+    await expect(secondBlock).toBeHidden();
+    expect(await fieldState()).toEqual({
+        nameDisabled: true,
+        nameRequired: false,
+        phoneRequired: false,
+        allRelationshipsRequired: false
+    });
+
+    // Con dos progenitores, el bloque aparece y sus campos pasan a ser obligatorios.
+    await page.locator('input[name="familyType"][value="dos_progenitores"]').check();
+    await expect(secondBlock).toBeVisible();
+    expect(await fieldState()).toEqual({
+        nameDisabled: false,
+        nameRequired: true,
+        phoneRequired: true,
+        allRelationshipsRequired: true
+    });
+
+    // Un teléfono demasiado corto del segundo adulto también se rechaza.
+    await phone2.fill("123");
+    await name2.click();
+    expect(await phone2.evaluate((input) => input.validationMessage)).toContain("9 dígitos");
+
+    // Al volver a familia monoparental, se oculta y se vacía.
+    await name2.fill("Segundo adulto");
+    await page.locator('input[name="familyType"][value="monoparental"]').check();
+    await expect(secondBlock).toBeHidden();
+    expect(await name2.inputValue()).toBe("");
+    expect(await fieldState()).toEqual({
+        nameDisabled: true,
+        nameRequired: false,
+        phoneRequired: false,
+        allRelationshipsRequired: false
+    });
 });
