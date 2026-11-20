@@ -548,20 +548,28 @@ td.cell-clip {
     white-space: nowrap;
 }
 
-td.cell-empty {
-    color: #aaa;
+/* Celda con varios valores apilados (por ejemplo, los dos progenitores) */
+td.cell-stack {
+    max-width: 260px;
+    white-space: normal;
+    vertical-align: top;
 }
 
-.guardian-extra {
-    display: inline-block;
-    margin-left: 4px;
-    padding: 1px 6px;
-    border-radius: 999px;
-    background-color: rgba(201, 167, 101, 0.18);
-    color: #8a6d2f;
-    font-size: 0.7rem;
-    font-weight: 700;
-    vertical-align: middle;
+td.cell-stack .cell-line {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+td.cell-stack .cell-line + .cell-line {
+    margin-top: 3px;
+    padding-top: 3px;
+    border-top: 1px dotted #dcdcdc;
+}
+
+td.cell-empty {
+    color: #aaa;
 }
 
 .badge {

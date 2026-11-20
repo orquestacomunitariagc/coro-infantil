@@ -250,13 +250,19 @@ function shortCell(value, fallback = "-") {
     return `<td class="cell-clip${value ? "" : " cell-empty"}" title="${escapeHtml(text)}">${escapeHtml(text)}</td>`;
 }
 
-// Nombre del adulto responsable, con una marca si hay un segundo progenitor.
-function guardianCell(row) {
-    const name = row.guardian_name || "-";
-    const extra = row.guardian2_name
-        ? '<span class="guardian-extra" title="Incluye los datos del segundo progenitor o tutor legal">2</span>'
-        : "";
-    return `<td class="cell-clip${row.guardian_name ? "" : " cell-empty"}" title="${escapeHtml(name)}">${escapeHtml(name)}${extra}</td>`;
+// Celda con varios valores (por ejemplo, los dos progenitores), uno por línea.
+function stackedCell(values, fallback = "-") {
+    const items = values.map((value) => String(value ?? "").trim()).filter(Boolean);
+
+    if (!items.length) {
+        return `<td class="cell-stack cell-empty">${escapeHtml(fallback)}</td>`;
+    }
+
+    const content = items
+        .map((item) => `<span class="cell-line">${escapeHtml(item)}</span>`)
+        .join("");
+
+    return `<td class="cell-stack" title="${escapeHtml(items.join(" · "))}">${content}</td>`;
 }
 
 function renderTable() {
@@ -278,10 +284,10 @@ function renderTable() {
             (row) => `
             <tr data-id="${escapeHtml(row.id)}">
                 <td>${escapeHtml(formatDateTime(row.created_at))}</td>
-                ${guardianCell(row)}
-                ${shortCell(row.guardian_relationship)}
-                ${shortCell(row.guardian_phone)}
-                ${shortCell(row.guardian_email)}
+                ${stackedCell([row.guardian_name, row.guardian2_name])}
+                ${stackedCell([row.guardian_relationship, row.guardian2_relationship])}
+                ${stackedCell([row.guardian_phone, row.guardian2_phone])}
+                ${stackedCell([row.guardian_email, row.guardian2_email])}
                 ${shortCell(row.child_name)}
                 <td>${escapeHtml(formatBirthDate(row.birth_date))}</td>
                 <td>${escapeHtml(row.child_age)}</td>
@@ -531,8 +537,10 @@ function exportPdf() {
         startY: 24,
         head: [[
             "Fecha",
-            "Adulto",
-            "Teléfono",
+            "Adultos responsables",
+            "Parentesco",
+            "Teléfonos",
+            "Emails",
             "Aspirante",
             "Nacimiento",
             "Edad",
@@ -541,17 +549,31 @@ function exportPdf() {
         ]],
         body: displayedData.map((row) => [
             formatDateTime(row.created_at),
-            row.guardian_name || "-",
-            row.guardian_phone || "-",
+            [row.guardian_name, row.guardian2_name].filter(Boolean).join("\n") || "-",
+            [row.guardian_relationship, row.guardian2_relationship].filter(Boolean).join("\n") || "-",
+            [row.guardian_phone, row.guardian2_phone].filter(Boolean).join("\n") || "-",
+            [row.guardian_email, row.guardian2_email].filter(Boolean).join("\n") || "-",
             row.child_name || "-",
             formatBirthDate(row.birth_date),
             row.child_age ?? "-",
             row.audition_slot || "-",
             row.rehearsal_availability || "-"
         ]),
-        styles: { fontSize: 8, cellPadding: 2 },
+        styles: { fontSize: 7, cellPadding: 1.5, overflow: "linebreak" },
         headStyles: { fillColor: [26, 30, 38], textColor: 255 },
         alternateRowStyles: { fillColor: [248, 249, 250] },
+        columnStyles: {
+            0: { cellWidth: 20 },
+            1: { cellWidth: 40 },
+            2: { cellWidth: 20 },
+            3: { cellWidth: 26 },
+            4: { cellWidth: 44 },
+            5: { cellWidth: 36 },
+            6: { cellWidth: 17 },
+            7: { cellWidth: 10 },
+            8: { cellWidth: 24 },
+            9: { cellWidth: 28 }
+        },
         margin: { left: 14, right: 14 }
     });
 
